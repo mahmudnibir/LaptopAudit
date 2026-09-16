@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="LaptopAudit is an evidence-based used laptop inspection toolkit.">
+<title>LaptopAudit | Used laptop inspection</title>
+<style>
+:root { --ink:#171717; --paper:#f4f1eb; --panel:#fffdf8; --line:#d9d3c8; --muted:#6e6a63; --red:#b83b2d; --green:#286848; }
+* { box-sizing:border-box; }
+body { margin:0; color:var(--ink); background:var(--paper); font:16px/1.5 Georgia,serif; }
+main { max-width:1120px; margin:auto; padding:32px 22px 70px; }
+header { display:flex; justify-content:space-between; align-items:center; gap:20px; padding-bottom:18px; border-bottom:2px solid var(--ink); }
+.logo { color:var(--ink); font:700 18px Arial,sans-serif; letter-spacing:.08em; text-transform:uppercase; }
+.github { color:var(--ink); font:700 12px Arial,sans-serif; text-decoration:none; border-bottom:1px solid var(--ink); padding-bottom:3px; }
+.hero { min-height:510px; display:grid; grid-template-columns:1.25fr .75fr; gap:40px; align-items:center; border-bottom:1px solid var(--line); }
+.kicker { margin:0 0 12px; color:var(--red); font:700 12px Arial,sans-serif; letter-spacing:.16em; text-transform:uppercase; }
+h1 { max-width:720px; margin:0; font:700 clamp(3rem,9vw,8.5rem)/.83 Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif; text-transform:uppercase; letter-spacing:.01em; }
+.lede { max-width:560px; margin:27px 0 0; font-size:20px; color:var(--muted); }
+.actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:28px; }
+.button { display:inline-block; padding:13px 17px; background:var(--ink); color:#fff; font:700 12px Arial,sans-serif; text-decoration:none; text-transform:uppercase; letter-spacing:.05em; }
+.button:hover,.button:focus-visible { background:var(--red); }
+.button.secondary { background:transparent; color:var(--ink); border:1px solid var(--ink); }
+.hero-note { border-left:5px solid var(--red); padding:22px 22px 24px; background:var(--panel); }
+.hero-note strong { display:block; font:700 29px Georgia,serif; margin-bottom:10px; }
+.hero-note p { margin:0; color:var(--muted); }
+section { padding-top:44px; } h2 { margin:0 0 18px; font:700 22px Arial,sans-serif; letter-spacing:-.02em; }
+.steps { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.step { min-height:190px; padding:19px; background:var(--panel); border:1px solid var(--line); }
+.number { color:var(--red); font:700 13px Arial,sans-serif; }
+.step h3 { margin:35px 0 7px; font:700 21px Georgia,serif; }
+.step p { margin:0; color:var(--muted); }
+.features { display:grid; grid-template-columns:repeat(2,1fr); gap:0 35px; border-top:1px solid var(--line); }
+.feature { padding:17px 0; border-bottom:1px solid var(--line); }
+.feature strong { display:block; font:700 17px Arial,sans-serif; margin-bottom:4px; }
+.feature span { color:var(--muted); }
+.notice { max-width:760px; margin-top:40px; padding:16px 18px; background:#ebe5da; border-left:4px solid var(--green); }
+footer { display:flex; justify-content:space-between; gap:15px; margin-top:60px; padding-top:14px; border-top:1px solid var(--line); color:var(--muted); font:12px Arial,sans-serif; }
+@media (max-width:760px) { .hero { display:block; min-height:0; padding:70px 0 48px; } .hero-note { margin-top:35px; } .steps,.features { grid-template-columns:1fr; } footer { display:block; } footer span { display:block; margin-top:8px; } }
+</style>
+</head>
+<body>
+<main>
+<header><a class="logo" href="./">LaptopAudit</a><a class="github" href="https://github.com/mahmudnibir/LaptopAudit">View on GitHub</a></header>
+<section class="hero">
+<div><p class="kicker">Used laptop inspection system</p><h1>Know what you are buying.</h1><p class="lede">Collect the facts. Test the things software cannot see. Keep the evidence clear enough to make a better decision.</p><div class="actions"><a class="button" href="physical-check/">Start physical inspection</a><a class="button secondary" href="README.md">Read the documentation</a></div></div>
+<aside class="hero-note"><strong>One repo.<br>Two kinds of evidence.</strong><p>Run the Windows quick check locally for hardware data, then use the browser checklist for pixels, keys, ports, sound, hinges, and everything else a script cannot judge.</p></aside>
+</section>
+<section><h2>How it works</h2><div class="steps"><article class="step"><span class="number">01 / COLLECT</span><h3>Run quick-check</h3><p>Generate a local JSON snapshot of the device, battery, memory, CPU, GPU, and storage.</p></article><article class="step"><span class="number">02 / INSPECT</span><h3>Look closer</h3><p>Open the physical checklist and record what you observe on the actual laptop.</p></article><article class="step"><span class="number">03 / DECIDE</span><h3>Share carefully</h3><p>Generate an HTML report, review its private hardware details, and share only what you choose.</p></article></div></section>
+<section><h2>What gets checked</h2><div class="features"><div class="feature"><strong>Battery and memory</strong><span>Capacity, health where available, charge state, modules, speed, and available RAM.</span></div><div class="feature"><strong>Storage</strong><span>Drive model, estimated capacity, type, interface, and available SMART prediction.</span></div><div class="feature"><strong>CPU and graphics</strong><span>Processor model, cores, threads, graphics adapter, VRAM, and driver version.</span></div><div class="feature"><strong>Physical condition</strong><span>Display, keyboard, trackpad, camera, audio, ports, wireless, hinges, and body.</span></div></div><div class="notice"><strong>Evidence over false precision.</strong> Missing hardware data is shown as unavailable. LaptopAudit does not invent a universal score or claim that software can verify physical condition.</div></section>
+<footer><span>LaptopAudit · Windows-first MVP</span><span>Open-source inspection tools for second-hand laptops</span></footer>
+</main>
+</body>
+</html>
