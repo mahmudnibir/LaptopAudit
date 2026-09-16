@@ -1,69 +1,143 @@
 # LaptopAudit
 
-LaptopAudit is a Windows-first used laptop inspection system. Run one checker, keep the raw evidence, and generate a report that separates measured hardware facts from physical inspection notes.
+**An open-source inspection toolkit for buying and selling used laptops.**
 
-It is designed for buyers, sellers, repair shops, and anyone evaluating a second-hand laptop without pretending that incomplete hardware telemetry is certainty.
+LaptopAudit collects hardware evidence locally, helps you test the things software cannot reliably see, and turns the results into a portable report. It is designed for buyers, sellers, repair shops, and anyone evaluating a second-hand laptop.
 
-## Project status
+> **Principle:** evidence over false precision. LaptopAudit does not invent missing telemetry or reduce a laptop to one universal score.
 
-The current release is an early Windows quick-check MVP. It collects system, CPU, GPU, memory, battery, and storage information, then creates a portable HTML report. The physical inspection page covers the hardware that software cannot reliably judge.
+## Current status
+
+**Windows-first early MVP.** The current release provides:
+
+- Windows system, CPU, GPU, memory, battery, and storage collection
+- Battery health and cycle data where Windows exposes it
+- Basic SMART failure-prediction information where available
+- Portable JSON evidence
+- Self-contained HTML report generation
+- Browser-based physical inspection checklist with local notes
+- Shared JSON schema for future platform collectors
+- Dependency-free Python tests
+- GitHub Actions validation for Python and PowerShell
 
 ## Quick start
 
-From PowerShell in this folder:
+### 1. Run the Windows quick check
+
+Open PowerShell in the repository folder:
 
 ```powershell
 Set-ExecutionPolicy -Scope Process Bypass
 .\windows\quick-check.ps1 -OutputPath .\output\laptop-report.json
+```
+
+### 2. Generate the report
+
+```powershell
 python .\report\generate_report.py .\output\laptop-report.json .\output\laptop-report.html
 Start-Process .\output\laptop-report.html
 ```
 
-For the physical checklist, open `physical-check/index.html` in a browser. It stores completion state and notes in local browser storage.
+### 3. Inspect the physical laptop
+
+Open `physical-check/index.html` in a browser and work through every item. Notes and completion state are stored in that browser's local storage.
 
 No administrator account, network connection, package installation, or telemetry service is required for the quick check.
 
-## What is included
+## What gets checked
 
-- `windows/quick-check.ps1`: collects Windows system, CPU, GPU, RAM, battery, and storage facts.
-- `report/generate_report.py`: creates a portable HTML report from the JSON evidence.
-- `physical-check/index.html`: records display, keyboard, trackpad, camera, audio, ports, wireless, and body checks.
-- `schemas/report.schema.json`: documents the cross-platform report contract.
+| Area | Quick check | Physical check |
+|---|---|---|
+| System / model | Yes | — |
+| CPU | Yes | — |
+| GPU | Yes | — |
+| RAM | Yes | — |
+| Battery | Yes, where exposed | Charging behavior |
+| Storage | Model, capacity, basic SMART prediction | — |
+| Thermals | Not yet | — |
+| Display | — | Pixels, brightness, bleeding, flicker |
+| Keyboard | — | Keys, backlight, physical feel |
+| Trackpad | — | Movement, clicks, gestures |
+| Camera / microphone | — | Image and recording input |
+| Speakers / headphone | — | Channels, distortion, jack |
+| Ports / charger | — | USB, HDMI, charging |
+| Wi-Fi / Bluetooth | — | Connection and accessories |
+| Body / hinges | — | Cracks, flex, screws, hinge tension |
 
 ## Report semantics
 
-LaptopAudit keeps raw measurements and uses conservative statuses:
+LaptopAudit intentionally separates **what was measured** from **what was not tested**.
 
-- `Good`: the available measurement is within a broadly healthy range.
-- `Warning`: the measurement suggests aging or needs attention.
-- `Critical`: the measurement indicates a likely repair or failure concern.
-- `Not available`: Windows or the hardware did not expose the value.
-- `Not tested`: the check was intentionally not run.
+- **Good** — available measurement is broadly healthy for the check being reported.
+- **Warning** — measurement suggests aging or deserves attention.
+- **Critical** — measurement indicates a likely repair or failure concern.
+- **Not available** — Windows or the hardware did not expose the value.
+- **Not tested** — the check was intentionally not run.
 
-The report does not calculate a universal score. Laptop priorities differ, and a buyer should be able to weigh battery life, storage, repair cost, and physical condition differently.
+These labels are contextual signals, not a guarantee of device condition. A buyer should inspect the underlying measurements and physical evidence.
 
-## Privacy and safety
+## Privacy
 
-Reports can include device model, serial numbers, operating-system details, and hardware identifiers. Review `laptop-report.json` before sharing it publicly. The collector writes only to the path you provide and does not upload data.
+LaptopAudit is local-first. The collector writes to the path you provide and does not upload telemetry.
 
-The quick check does not stress the CPU, modify firmware, write to storage devices, or claim to verify physical condition. Use the physical checklist while inspecting the actual laptop.
+Generated reports may contain sensitive device information, including model names, serial numbers, OS details, and hardware identifiers. **Review the JSON before sharing it.** Never publish a real report containing private identifiers unless you intend to disclose them.
+
+## Safety
+
+The quick check is intentionally conservative. It does **not** stress the CPU, modify firmware, write test data to storage devices, or claim to verify physical condition.
+
+A future full-check layer can add opt-in stress and thermal testing while keeping the quick check safe for normal second-hand inspection.
 
 ## Development
 
-Run the dependency-free tests with:
+Run the dependency-free tests:
 
 ```powershell
 python -m unittest discover -s tests -v
 ```
 
-The HTML generator uses only Python's standard library. PowerShell validation requires Windows PowerShell or PowerShell 7 and is run on the target laptop.
+The report generator uses only Python's standard library. PowerShell validation requires Windows PowerShell or PowerShell 7.
 
-## Important limitations
+GitHub Actions automatically validates the Python test suite, report schema JSON, and PowerShell syntax on pushes and pull requests.
 
-Hardware telemetry depends on the laptop manufacturer and Windows permissions. Missing values are reported as `Not available`, not guessed. The quick check does not run a stress test or make claims about dead pixels, physical damage, upgradeability, or port condition.
+## Repository layout
 
-Future layers can add `full-check` thermal testing, richer SMART attributes, Linux collectors, and optional Bangladesh repair-cost notes without changing the report format.
+```text
+LaptopAudit/
+├── windows/              # Windows collectors
+│   └── quick-check.ps1
+├── physical-check/       # Browser-based manual inspection
+│   └── index.html
+├── report/               # Portable report generation
+│   └── generate_report.py
+├── schemas/              # Shared report contract
+│   └── report.schema.json
+├── tests/                # Automated tests
+├── .github/workflows/    # CI validation
+├── CONTRIBUTING.md
+├── SECURITY.md
+└── README.md
+```
+
+## Roadmap
+
+- [ ] Full-check mode with explicit opt-in thermal testing
+- [ ] Richer SATA/NVMe SMART attributes
+- [ ] Display test utilities for dead/stuck pixels and uniformity
+- [ ] Memory diagnostics guidance
+- [ ] Linux collector
+- [ ] Better upgradeability detection with conservative evidence
+- [ ] Optional market/repair-cost notes without changing the evidence model
+- [ ] Versioned report schema and migration guidance
 
 ## Contributing
 
-Keep collectors conservative: preserve raw evidence, return explicit unavailable states, avoid universal hardware thresholds, and update the schema and tests when adding fields. Do not commit generated reports from the `output/` directory.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md). Keep collectors conservative, preserve raw evidence, expose uncertainty, and update the schema and tests when changing the report contract.
+
+## Security
+
+See [`SECURITY.md`](SECURITY.md) for responsible vulnerability reporting.
+
+## License
+
+This project does not currently declare a license. If you want others to legally reuse, modify, or distribute the code, add an explicit open-source license before calling the repository open source.
