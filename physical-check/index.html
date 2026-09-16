@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LaptopAudit physical inspection</title>
+<style>
+:root { --ink:#171717; --paper:#f4f1eb; --panel:#fffdf8; --line:#d9d3c8; --red:#b83b2d; --green:#286848; --muted:#6e6a63; }
+* { box-sizing:border-box } body { margin:0; color:var(--ink); background:var(--paper); font:16px/1.45 Georgia, serif; }
+main { max-width:1060px; margin:auto; padding:38px 22px 70px; } header { display:flex; justify-content:space-between; align-items:end; gap:20px; padding-bottom:22px; border-bottom:2px solid var(--ink); }
+.kicker { margin:0 0 8px; color:var(--red); font:700 12px Arial,sans-serif; letter-spacing:.14em; text-transform:uppercase; } h1 { margin:0; font:700 clamp(2.5rem, 8vw, 6rem)/.88 Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif; text-transform:uppercase; } .intro { max-width:245px; color:var(--muted); margin:0; }
+.toolbar { display:flex; justify-content:space-between; gap:14px; align-items:center; margin:25px 0 12px; } .progress { color:var(--muted); font:700 13px Arial,sans-serif; } button { border:1px solid var(--ink); background:var(--ink); color:white; padding:11px 14px; font:700 12px Arial,sans-serif; cursor:pointer; } button:hover,button:focus-visible { background:var(--red); border-color:var(--red); }
+.grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px; } .item { background:var(--panel); border:1px solid var(--line); padding:18px; min-height:155px; display:flex; flex-direction:column; justify-content:space-between; } .item.checked { border-color:var(--green); background:#f1f6f0; } .item-top { display:flex; justify-content:space-between; gap:12px; } h2 { margin:0; font:700 20px Arial,sans-serif; } .detail { color:var(--muted); margin:8px 0 0; } label { display:flex; align-items:center; gap:8px; font:700 12px Arial,sans-serif; text-transform:uppercase; letter-spacing:.06em; cursor:pointer; } input[type=checkbox] { accent-color:var(--green); width:18px; height:18px; } .notes { width:100%; min-height:48px; border:0; border-bottom:1px solid var(--line); background:transparent; resize:vertical; font:15px Georgia,serif; padding:8px 0 4px; } .notes:focus { outline:0; border-bottom-color:var(--red); } footer { margin-top:26px; color:var(--muted); font:12px Arial,sans-serif; }
+@media (max-width:680px) { header,.toolbar { display:block; } .intro { margin-top:18px; } .toolbar button { margin-top:12px; } .grid { grid-template-columns:1fr; } }
+</style></head>
+<body><main>
+<header><div><p class="kicker">LaptopAudit / physical check</p><h1>Look closer.</h1></div><p class="intro">Record what software cannot know. Your notes stay in this browser until you clear them.</p></header>
+<div class="toolbar"><span class="progress" id="progress" aria-live="polite">0 of 8 completed</span><button type="button" id="reset">Reset checklist</button></div>
+<section class="grid" id="checklist" aria-label="Physical inspection checklist"></section>
+<footer>Use a plain white, black, red, green, and blue screen to inspect pixels and uniformity. Test every key, port, camera, speaker, and wireless connection.</footer>
+</main>
+<script>
+const checks = [
+  ['display','Display','Dead pixels, brightness, bleeding, flicker'],
+  ['keyboard','Keyboard','Every key, backlight, layout, and physical feel'],
+  ['trackpad','Trackpad','Movement, clicks, scrolling, and gestures'],
+  ['camera-audio','Camera + microphone','Preview, focus, image, and recording input'],
+  ['speakers','Speakers + headphone jack','Left/right channels, distortion, and jack fit'],
+  ['ports','USB, HDMI + charger','Test every port and confirm stable charging'],
+  ['wireless','Wi-Fi + Bluetooth','Connect to a known network and accessory'],
+  ['body','Body, hinges + screws','Cracks, flex, missing screws, and hinge tension']
+];
+const key = 'laptopaudit-physical-check';
+const saved = JSON.parse(localStorage.getItem(key) || '{}');
+const checklist = document.querySelector('#checklist');
+checks.forEach(([id,title,detail]) => {
+  const state = saved[id] || {};
+  const article = document.createElement('article'); article.className = `item${state.done ? ' checked' : ''}`;
+  article.innerHTML = `<div class="item-top"><div><h2>${title}</h2><p class="detail">${detail}</p></div><label><input type="checkbox" ${state.done ? 'checked' : ''}>Done</label></div><textarea class="notes" aria-label="Notes for ${title}" placeholder="Add an observation...">${state.note || ''}</textarea>`;
+  const checkbox = article.querySelector('input'); const notes = article.querySelector('textarea');
+  const update = () => { saved[id] = { done: checkbox.checked, note: notes.value }; localStorage.setItem(key, JSON.stringify(saved)); article.classList.toggle('checked', checkbox.checked); updateProgress(); };
+  checkbox.addEventListener('change', update); notes.addEventListener('input', update); checklist.append(article);
+});
+function updateProgress() { const complete = checks.filter(([id]) => saved[id]?.done).length; document.querySelector('#progress').textContent = `${complete} of ${checks.length} completed`; }
+document.querySelector('#reset').addEventListener('click', () => { localStorage.removeItem(key); location.reload(); }); updateProgress();
+</script></body></html>

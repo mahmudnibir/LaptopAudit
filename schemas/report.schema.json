@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LaptopAudit report",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "checker", "device", "battery", "memory", "storage", "thermals"],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "checker": {"type": "object"},
+    "device": {"type": "object"},
+    "battery": {"type": "object"},
+    "memory": {"type": "object"},
+    "storage": {"type": "array", "items": {"type": "object"}},
+    "thermals": {"type": "object"},
+    "physical_inspection": {"type": "object"}
+  }
+}
