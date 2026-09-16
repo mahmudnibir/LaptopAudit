@@ -1,17 +1,38 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "LaptopAudit report",
+  "description": "Evidence contract shared by LaptopAudit collectors and report generators.",
   "type": "object",
-  "required": ["schema_version", "generated_at", "checker", "device", "battery", "memory", "storage", "thermals"],
+  "required": ["schema_version", "generated_at", "checker", "device", "battery", "memory", "storage", "thermals", "physical_inspection"],
   "properties": {
-    "schema_version": {"type": "string"},
+    "schema_version": {"type": "string", "minLength": 1},
     "generated_at": {"type": "string", "format": "date-time"},
-    "checker": {"type": "object"},
-    "device": {"type": "object"},
-    "battery": {"type": "object"},
-    "memory": {"type": "object"},
-    "storage": {"type": "array", "items": {"type": "object"}},
-    "thermals": {"type": "object"},
-    "physical_inspection": {"type": "object"}
-  }
+    "checker": {
+      "type": "object",
+      "required": ["name", "mode", "platform"],
+      "properties": {
+        "name": {"const": "LaptopAudit"},
+        "mode": {"type": "string", "minLength": 1},
+        "platform": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": true
+    },
+    "device": {"type": "object", "additionalProperties": true},
+    "battery": {"type": "object", "additionalProperties": true},
+    "memory": {"type": "object", "additionalProperties": true},
+    "storage": {
+      "type": "array",
+      "items": {"type": "object", "additionalProperties": true}
+    },
+    "thermals": {"type": "object", "additionalProperties": true},
+    "physical_inspection": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "items": {"type": "array"}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
 }
